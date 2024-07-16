@@ -1,0 +1,32 @@
+import requests
+import json
+
+# Function to fetch weather data from the API
+def fetch_weather_data(location):
+    api_key = "b759b25d9ac82726fe7ee356a0c3f2f3"
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}"
+    response = requests.get(url)
+    data = json.loads(response.text)
+    return data
+
+# Function to display the weather information
+def display_weather_info(weather_data):
+    temperature = weather_data["main"]["temp"]
+    weather_conditions = weather_data["weather"][0]["description"]
+    humidity = weather_data["main"]["humidity"]
+    wind_speed = weather_data["wind"]["speed"]
+
+    print(f"Temperature: {temperature} K")
+    print(f"Weather Conditions: {weather_conditions}")
+    print(f"Humidity: {humidity}%")
+    print(f"Wind Speed: {wind_speed} m/s")
+
+# Main function
+def main():
+    location = input("Enter the location (city name or coordinates): ")
+    weather_data = fetch_weather_data(location)
+    display_weather_info(weather_data)
+
+# Run the main function
+if __name__ == "__main__":
+    main()
