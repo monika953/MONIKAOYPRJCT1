@@ -1,0 +1,61 @@
+# Step 1: Import Necessary Libraries
+import requests
+import json
+import time
+# Optional for GUI or visualization
+# import matplotlib.pyplot as plt
+# import tkinter as tk
+
+# Step 2: Fetch Data from API
+def fetch_covid_data():
+    api_url = "b759b25d9ac82726fe7ee356a0c3f2f3"
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print("Failed to fetch data")
+        return None
+
+# Step 3: Process Data
+def process_data(data):
+    if data is not None:
+        global_data = data['Global']
+        total_cases = global_data['TotalConfirmed']
+        total_deaths = global_data['TotalDeaths']
+        total_recovered = global_data['TotalRecovered']
+        return total_cases, total_deaths, total_recovered
+    else:
+        return None, None, None
+
+# Step 4: Display Data
+def display_data(total_cases, total_deaths, total_recovered):
+    print(f"Total Cases: {total_cases}")
+    print(f"Total Deaths: {total_deaths}")
+    print(f"Total Recovered: {total_recovered}")
+    
+    # Optional: Update GUI or plot data
+    # update_gui(total_cases, total_deaths, total_recovered)
+    # update_plot(total_cases, total_deaths, total_recovered)
+
+# Optional: GUI update function
+# def update_gui(total_cases, total_deaths, total_recovered):
+#     # Implement GUI update logic using tkinter
+#     pass
+
+# Optional: Plot update function
+# def update_plot(total_cases, total_deaths, total_recovered):
+#     # Implement plot update logic using matplotlib
+#     pass
+
+# Step 5: Periodic Update
+def main():
+    while True:
+        data = fetch_covid_data()
+        total_cases, total_deaths, total_recovered = process_data(data)
+        display_data(total_cases, total_deaths, total_recovered)
+        
+        # Wait for a specified interval before the next update (e.g., 60 seconds)
+        time.sleep(60)
+
+if __name__ == "__main__":
+    main()
