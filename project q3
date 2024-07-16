@@ -1,0 +1,157 @@
+# Import necessary libraries 
+
+import requests 
+
+  
+
+# Function to fetch traffic data from API 
+
+def fetch_traffic_data(start, destination, api_key): 
+
+    base_url = "b759b25d9ac82726fe7ee356a0c3f2f3" 
+
+     
+
+    # Parameters for the API request 
+
+    params = { 
+
+        "origin": start, 
+
+        "destination": destination, 
+
+        "key": api_key, 
+
+        "departure_time": "now", 
+
+        "traffic_model": "best_guess",  # Options: best_guess, pessimistic, optimistic 
+
+    } 
+
+     
+
+    try: 
+
+        # Make request to the API 
+
+        response = requests.get(base_url, params=params) 
+
+        response.raise_for_status()  # Raise exception for any HTTP errors 
+
+         
+
+        # Parse JSON response 
+
+        traffic_data = response.json() 
+
+         
+
+        # Return traffic data 
+
+        return traffic_data 
+
+     
+
+    except requests.exceptions.RequestException as e: 
+
+        print(f"Error fetching traffic data: {e}") 
+
+        return None 
+
+  
+
+# Function to display traffic information 
+
+def display_traffic_info(traffic_data): 
+
+    if traffic_data is None or traffic_data.get("status") != "OK": 
+
+        print("No traffic data available.") 
+
+        return 
+
+     
+
+    # Extract relevant information 
+
+    route = traffic_data["routes"][0]  # Assume first route is the best option 
+
+    summary = route["summary"] 
+
+    legs = route["legs"][0]  # Assume single leg for simplicity 
+
+    duration_traffic = legs["duration_in_traffic"]["text"] 
+
+    distance = legs["distance"]["text"] 
+
+    start_address = legs["start_address"] 
+
+    end_address = legs["end_address"] 
+
+     
+
+    # Display traffic information 
+
+    print(f"Route Summary: {summary}") 
+
+    print(f"Start: {start_address}") 
+
+    print(f"End: {end_address}") 
+
+    print(f"Distance: {distance}") 
+
+    print(f"Estimated Travel Time (in current traffic): {duration_traffic}") 
+
+     
+
+    # Check for alternative routes 
+
+    if len(route["legs"]) > 1: 
+
+        print("\nAlternative Routes:") 
+
+        for i, alt_leg in enumerate(route["legs"][1:], start=1): 
+
+            alt_summary = alt_leg["summary"] 
+
+            alt_duration_traffic = alt_leg["duration_in_traffic"]["text"] 
+
+            print(f"Alternative Route {i}: {alt_summary}, Estimated Time: {alt_duration_traffic}") 
+
+  
+
+# Main function to run the program 
+
+def main(): 
+
+    # Replace with your own API key 
+
+    api_key = "your_api_key_here" 
+
+     
+
+    # Input starting point and destination from user 
+
+    start = input("Enter starting point address or coordinates: ").strip() 
+
+    destination = input("Enter destination address or coordinates: ").strip() 
+
+     
+
+    # Fetch traffic data 
+
+    traffic_data = fetch_traffic_data(start, destination, api_key) 
+
+     
+
+    # Display traffic information 
+
+    display_traffic_info(traffic_data) 
+
+  
+
+# Run the main function 
+
+if __name__ == "__main__": 
+
+    main() 
