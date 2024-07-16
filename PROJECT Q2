@@ -1,0 +1,140 @@
+# Define the Inventory System Structure
+
+# Define Product class
+class Product:
+    def __init__(self, product_id, name, description):
+        self.product_id = product_id
+        self.name = name
+        self.description = description
+
+# Define Warehouse class
+class Warehouse:
+    def __init__(self, warehouse_id, location):
+        self.warehouse_id = warehouse_id
+        self.location = location
+        self.stock = {}  # Dictionary to store product_id: quantity pairs
+
+    def add_stock(self, product_id, quantity):
+        if product_id in self.stock:
+            self.stock[product_id] += quantity
+        else:
+            self.stock[product_id] = quantity
+
+    def remove_stock(self, product_id, quantity):
+        if product_id in self.stock:
+            if self.stock[product_id] >= quantity:
+                self.stock[product_id] -= quantity
+            else:
+                print(f"Error: Insufficient stock of product ID {product_id}")
+        else:
+            print(f"Error: Product ID {product_id} not found in warehouse")
+
+    def get_stock_level(self, product_id):
+        return self.stock.get(product_id, 0)
+
+# Define InventorySystem class
+class InventorySystem:
+    def __init__(self):
+        self.products = {}  # Dictionary to store product_id: Product object pairs
+        self.warehouses = {}  # Dictionary to store warehouse_id: Warehouse object pairs
+
+    def add_product(self, product_id, name, description):
+        if product_id not in self.products:
+            self.products[product_id] = Product(product_id, name, description)
+        else:
+            print(f"Error: Product ID {product_id} already exists")
+
+    def add_warehouse(self, warehouse_id, location):
+        if warehouse_id not in self.warehouses:
+            self.warehouses[warehouse_id] = Warehouse(warehouse_id, location)
+        else:
+            print(f"Error: Warehouse ID {warehouse_id} already exists")
+
+    def add_stock_to_warehouse(self, warehouse_id, product_id, quantity):
+        if warehouse_id in self.warehouses:
+            self.warehouses[warehouse_id].add_stock(product_id, quantity)
+        else:
+            print(f"Error: Warehouse ID {warehouse_id} not found")
+
+    def remove_stock_from_warehouse(self, warehouse_id, product_id, quantity):
+        if warehouse_id in self.warehouses:
+            self.warehouses[warehouse_id].remove_stock(product_id, quantity)
+        else:
+            print(f"Error: Warehouse ID {warehouse_id} not found")
+
+    def get_stock_level(self, warehouse_id, product_id):
+        if warehouse_id in self.warehouses:
+            return self.warehouses[warehouse_id].get_stock_level(product_id)
+        else:
+            print(f"Error: Warehouse ID {warehouse_id} not found")
+
+    def alert_low_stock(self, product_id, threshold):
+        for warehouse_id, warehouse in self.warehouses.items():
+            stock_level = warehouse.get_stock_level(product_id)
+            if stock_level < threshold:
+                print(f"Alert: Product ID {product_id} is low in warehouse {warehouse_id}. Current stock: {stock_level}")
+
+# Implementing Inventory Tracking Application
+
+# Create an instance of InventorySystem
+inventory_system = InventorySystem()
+
+# Add products
+inventory_system.add_product(1, "Product A", "Description of Product A")
+inventory_system.add_product(2, "Product B", "Description of Product B")
+
+# Add warehouses
+inventory_system.add_warehouse(1, "Warehouse A")
+inventory_system.add_warehouse(2, "Warehouse B")
+
+# Add stock to warehouses
+inventory_system.add_stock_to_warehouse(1, 1, 100)
+inventory_system.add_stock_to_warehouse(2, 1, 50)
+inventory_system.add_stock_to_warehouse(2, 2, 75)
+
+# Alert low stock
+inventory_system.alert_low_stock(1, 50)
+
+# User Interaction Example
+
+# Function to interact with the user
+def user_interaction():
+    while True:
+        print("\nInventory System Menu:")
+        print("1. Check Stock Level")
+        print("2. Add Stock to Warehouse")
+        print("3. Remove Stock from Warehouse")
+        print("4. Exit")
+
+        choice = input("Enter your choice (1-4): ")
+
+        if choice == '1':
+            product_id = int(input("Enter product ID: "))
+            warehouse_id = int(input("Enter warehouse ID: "))
+            stock_level = inventory_system.get_stock_level(warehouse_id, product_id)
+            print(f"Stock level of Product ID {product_id} in Warehouse ID {warehouse_id}: {stock_level}")
+        
+        elif choice == '2':
+            warehouse_id = int(input("Enter warehouse ID: "))
+            product_id = int(input("Enter product ID: "))
+            quantity = int(input("Enter quantity to add: "))
+            inventory_system.add_stock_to_warehouse(warehouse_id, product_id, quantity)
+            print(f"Added {quantity} units of Product ID {product_id} to Warehouse ID {warehouse_id}")
+        
+        elif choice == '3':
+            warehouse_id = int(input("Enter warehouse ID: "))
+            product_id = int(input("Enter product ID: "))
+            quantity = int(input("Enter quantity to remove: "))
+            inventory_system.remove_stock_from_warehouse(warehouse_id, product_id, quantity)
+            print(f"Removed {quantity} units of Product ID {product_id} from Warehouse ID {warehouse_id}")
+        
+        elif choice == '4':
+            print("Exiting program...")
+            break
+        
+        else:
+            print("Invalid choice. Please enter a number from 1 to 4.")
+
+# Run the user interaction function
+user_interaction()
+
